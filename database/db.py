@@ -6,12 +6,13 @@ DB_NAME = 'attendance'
 TABLES = {}
 
 cnx = mysql.connector.connect(
-    user = 'root',
-    password = 'ayankhan',
-    host = 'localhost',
+    user='root',
+    password='ayankhan',
+    host='localhost',
 )
 
 cursor = cnx.cursor()
+
 
 def create_database(cursor):
     try:
@@ -22,6 +23,7 @@ def create_database(cursor):
     except:
         print("Failed to create database")
         exit(1)
+
 
 try:
     cursor.execute(
@@ -39,7 +41,8 @@ TABLES[f'{date}'] = (
     f"CREATE TABLE `{date}`("
     f"`roll_no` int NOT NULL PRIMARY KEY,"
     f"`name` VARCHAR(50) NOT NULL,"
-    f"`date` date NOT NULL"
+    f"`date_` date NOT NULL,"
+    f"`time_` VARCHAR(15) NOT NULL"
     f")")
 
 table_desc = TABLES[f'{date}']
@@ -55,3 +58,17 @@ except mysql.connector.Error as err:
 else:
     print("OK")
 
+
+def add_to_db(roll, name, date_, time_):
+    try:
+        add_person = f"INSERT INTO {date} (roll_no, name, date_, time_) VALUES (%s, %s, %s, %s)"
+        data_person = (str(roll), name, date_, time_)
+        cursor.execute(add_person, data_person)
+        cnx.commit()
+    except:
+        print("already present!")
+    else:
+        print(f"{name} is present")
+        print(cursor.rowcount, "record inserted")
+
+# add_to_db(101, "ayan", datetime.now().date(), datetime.now().strftime("%Hh:%Mm:%Ss"))

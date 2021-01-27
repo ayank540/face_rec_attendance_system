@@ -3,21 +3,18 @@ import numpy as np
 import face_recognition
 import os
 from datetime import datetime
-import database.db
+from database import db
 
 PATH = 'data_image'
 images = []
 classNames = []
 myList = os.listdir(PATH)
 date = datetime.now().date()
-# print(myList)
 
 for cls in myList:
     currImg = cv2.imread(f'{PATH}/{cls}')
     images.append(currImg)
     classNames.append(os.path.splitext(cls)[0])
-# print(images)
-# print(classNames)
 
 def find_encodings(images):
     encodeList = []
@@ -27,9 +24,13 @@ def find_encodings(images):
         encodeList.append(encode)
     return encodeList
 
-def markAttendance(name):
-    addAttendance = (f"INSERT INTO {date} "
-                     f"(roll_no, name, )")
+
+def markAttendance(className):
+    roll, name = className.split(' ')
+    time_ = datetime.now().strftime("%Hh:%Mm:%Ss")
+    date_ = datetime.now().date()
+    db.add_to_db(roll, name, date_, time_)
+
 
 encodeListKnown = find_encodings(images)
 print('Encoding completed')
